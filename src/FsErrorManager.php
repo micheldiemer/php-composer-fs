@@ -31,7 +31,7 @@ class FsErrorManager
 
         if (self::$defaultErrorHandler && self::$nb++ == 0) {
             if (!defined('PHPUNIT_RUNNING') || constant('PHPUNIT_RUNNING_TEST_ERRORS') == 1) {
-                self::$prevErrorHandler = set_error_handler(['FsErrorManager', 'warning_handler'], E_WARNING);
+                self::$prevErrorHandler = set_error_handler(['self', 'warning_handler'], E_WARNING);
             }
             self::$defaultErrorHandler = false;
 
