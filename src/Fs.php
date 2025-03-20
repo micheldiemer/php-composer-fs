@@ -7,9 +7,11 @@ namespace Md\Fs;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
+use Md\Fs\FsErrorManager;
+
 class Fs
 {
-    private static LoggerInterface|null $logger;
+    private static LoggerInterface|null $logger = null;
 
     public static function setLogger(LoggerInterface|null $logger)
     {
