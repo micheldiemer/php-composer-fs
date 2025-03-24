@@ -17,7 +17,7 @@ class FsErrorManager
             if (self::$nb == 0) {
                 self::$defaultErrorHandler = true;
                 //restore_error_handler();
-                if (!defined('PHPUNIT_RUNNING') || constant('PHPUNIT_RUNNING_TEST_ERRORS') == 1) {
+                if (!defined('PHPUNIT_RUNNING') || \constant('PHPUNIT_RUNNING_TEST_ERRORS') == 1) {
                     restore_error_handler();
                     // set_error_handler(self::$prevErrorHandler);
                 }
@@ -30,8 +30,8 @@ class FsErrorManager
         }
 
         if (self::$defaultErrorHandler && self::$nb++ == 0) {
-            if (!defined('PHPUNIT_RUNNING') || constant('PHPUNIT_RUNNING_TEST_ERRORS') == 1) {
-                self::$prevErrorHandler = set_error_handler(['self', 'warning_handler'], E_WARNING);
+            if (!defined('PHPUNIT_RUNNING') || \constant('PHPUNIT_RUNNING_TEST_ERRORS') == 1) {
+                self::$prevErrorHandler = \set_error_handler(['self', 'warning_handler'], E_WARNING);
             }
             self::$defaultErrorHandler = false;
 
