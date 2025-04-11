@@ -13,32 +13,31 @@ class FsErrorManager
     {
         // echo "setErrorHandler: " . ($restore ? "restore" : "set") . " nb= " . self::$nb . PHP_EOL;
         if ($restore) {
-            self::$nb--;
-            if (self::$nb == 0) {
-                self::$defaultErrorHandler = true;
-                //restore_error_handler();
-                if (!defined('PHPUNIT_RUNNING') || \constant('PHPUNIT_RUNNING_TEST_ERRORS') == 1) {
-                    restore_error_handler();
-                    // set_error_handler(self::$prevErrorHandler);
-                }
+            if (self::$nb > 0) {
+                self::$nb--;
+            }
+            if (self::$nb == 0 && !self::$defaultErrorHandler) {
+                self::$defaultErrorHandler = restore_error_handler();
+                self::$prevErrorHandler = null;
+                // set_error_handler(self::$prevErrorHandler);
+
                 // $errstr = var_export(self::$prevErrorHandler, true);
                 // $d = substr($errstr, 0, strpos($errstr, "\n"));
                 // echo "RESTORED : " . $d . PHP_EOL;
             }
             // echo "setErrorHandler ret: " . ($restore ? "restore" : "set") . " nb= " . self::$nb . PHP_EOL;;
             return;
-        }
+        } else {
+            self::$nb++;
+            if (self::$nb == 1 && self::$defaultErrorHandler !== false) {
+                self::$prevErrorHandler = \set_error_handler([__NAMESPACE__ . '\FsErrorManager', 'warning_handler'], E_WARNING);
+                self::$defaultErrorHandler = false;
 
-        if (self::$defaultErrorHandler && self::$nb++ == 0) {
-            if (!defined('PHPUNIT_RUNNING') || \constant('PHPUNIT_RUNNING_TEST_ERRORS') == 1) {
-                self::$prevErrorHandler = \set_error_handler(['self', 'warning_handler'], E_WARNING);
+                // $errstr = var_export(self::$prevErrorHandler, true);
+                // $d = substr($errstr, 0, strpos($errstr, "\n"));
+                // echo $d . PHP_EOL;
+                // echo "setErrorHandler ret: " . ($restore ? "restore" : "set") . " nb= " . self::$nb . PHP_EOL;;
             }
-            self::$defaultErrorHandler = false;
-
-            // $errstr = var_export(self::$prevErrorHandler, true);
-            // $d = substr($errstr, 0, strpos($errstr, "\n"));
-            // echo $d . PHP_EOL;
-            // echo "setErrorHandler ret: " . ($restore ? "restore" : "set") . " nb= " . self::$nb . PHP_EOL;;
         }
     }
 
@@ -49,7 +48,7 @@ class FsErrorManager
         string $errfile,
         int $errline,
     ) {
-
+        self::setErrorHandler(true);
         throw new FsException(
             'warning_handler',
             $errstr,

@@ -11,7 +11,11 @@ use Md\Fs\FsErrorManager;
 
 class Fs
 {
+
+
     private static LoggerInterface|null $logger = null;
+
+
 
     public static function setLogger(LoggerInterface|null $logger)
     {
@@ -36,7 +40,10 @@ class Fs
     {
         self::checkDir($path, __FUNCTION__, __LINE__);
 
-        $it = new \RecursiveDirectoryIterator($path);
+        $it = new \RecursiveDirectoryIterator(
+            $path,
+            \RecursiveDirectoryIterator::SKIP_DOTS
+        );
         if ($Recursive) {
             $it = new \RecursiveIteratorIterator($it);
         }
@@ -50,6 +57,7 @@ class Fs
 
     public static function removeDir(string $dir, $exclude = []): void
     {
+        self::checkDir($dir, __FUNCTION__, __LINE__);
 
         self::removeAllFiles($dir, $exclude);
 
@@ -205,5 +213,10 @@ class Fs
         }
 
         return $matches;
+    }
+
+    private static function testW($file)
+    {
+        unlink($file);
     }
 }
